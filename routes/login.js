@@ -40,7 +40,15 @@ function discordCallback(req, res, next) {
                 return res.redirect('/login');
             }
 
-            return res.redirect('/');
+            return req.session.save(sessionError => {
+                if (sessionError) {
+                    console.error('Discord session save failed:', sessionError);
+                    req.flash('error', 'Unable to save the login session. Please try again.');
+                    return res.redirect('/login');
+                }
+
+                return res.redirect('/dashboard');
+            });
         });
     })(req, res, next);
 }

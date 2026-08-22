@@ -40,10 +40,10 @@ function getSafeClient() {
 }
 
 router.get('/', ensureAuthenticated,(req,res) =>{
-    res.redirect('/home')
+  res.redirect('/dashboard')
 })
 
-router.get('/home', ensureAuthenticated,(req, res) => {
+router.get(['/home', '/dashboard'], ensureAuthenticated,(req, res) => {
   let theme;
   let safeClient;
   let safeProfile;
