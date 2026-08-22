@@ -30,13 +30,16 @@ require('./auth/passport')(passport);
 app.set('trust proxy', 1);
 app.use(
     session({
-      secret: 'keyboard_cat',
+      secret: process.env.SESSION_SECRET || 'secretkey123',
       resave: true,
       saveUninitialized: true,
       proxy: true,
+      name: 'discord.sid',
       cookie: {
+        httpOnly: true,
         secure: true,
-        sameSite: 'none'
+        sameSite: 'lax',
+        maxAge: 7 * 24 * 60 * 1000
       }
     })
 );
@@ -69,7 +72,9 @@ app.get('/auth/discord/callback',
       if (err || !user) return res.redirect('/');
       req.logIn(user, loginErr => {
         if (loginErr) return res.redirect('/');
-        req.session.save(() => {
+        req.session.user = user;
+        req.session.save(saveErr => {
+          if (saveErr) console.error(saveErr);
           return res.redirect('/dashboard');
         });
       });
@@ -78,7 +83,7 @@ app.get('/auth/discord/callback',
 );
 
 app.get('/dashboard', (req, res) => {
-  if (!req.isAuthenticated || !req.isAuthenticated()) {
+  if (!(typeof req.isAuthenticated === 'function' && req.isAuthenticated()) && !req.session?.user) {
     return res.redirect('/');
   }
   res.send('Dashboard Loaded Successfully!');
