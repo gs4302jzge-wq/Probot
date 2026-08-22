@@ -4,6 +4,7 @@ const flash = require('connect-flash');
 const session = require('express-session');
 const passport = require('passport');
 const fileUpload = require('express-fileupload');
+const crypto = require('crypto');
 const config = require('./config/config.json')
 const path = require('path');
 
@@ -15,6 +16,8 @@ const port = process.env.PORT || 1337;
 const publicPath = path.join(__dirname, 'public');
 const themesPath = path.join(__dirname, 'themes');
 const viewsPath = path.join(__dirname, 'views');
+const loginTokens = new Map();
+const loginTokenTtl = 5 * 60 * 1000;
 
 app.use(express.static(publicPath));
 app.use(express.static(themesPath));
@@ -72,10 +75,13 @@ app.get('/auth/discord/callback',
       if (err || !user) return res.redirect('/');
       req.logIn(user, loginErr => {
         if (loginErr) return res.redirect('/');
+        const loginToken = crypto.randomBytes(32).toString('hex');
+        loginTokens.set(loginToken, { user, expiresAt: Date.now() + loginTokenTtl });
         req.session.user = user;
         req.session.save(saveErr => {
           if (saveErr) console.error(saveErr);
-          return res.redirect('/dashboard');
+          const query = `?auth=success&token=${encodeURIComponent(loginToken)}`;
+          return res.redirect(`/dashboard${query}`);
         });
       });
     })(req, res, next);
@@ -83,6 +89,13 @@ app.get('/auth/discord/callback',
 );
 
 app.get('/dashboard', (req, res) => {
+  const token = typeof req.query.token === 'string' ? req.query.token : '';
+  const tokenEntry = loginTokens.get(token);
+  if (req.query.auth === 'success' && tokenEntry && tokenEntry.expiresAt > Date.now()) {
+    req.session.user = tokenEntry.user;
+    return res.send('Dashboard Loaded Successfully!');
+  }
+  if (tokenEntry) loginTokens.delete(token);
   if (!(typeof req.isAuthenticated === 'function' && req.isAuthenticated()) && !req.session?.user) {
     return res.redirect('/');
   }
