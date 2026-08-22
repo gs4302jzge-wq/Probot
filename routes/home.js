@@ -52,7 +52,7 @@ router.get('/', (req,res) =>{
   }
 })
 
-router.get(['/home', '/dashboard'], ensureAuthenticated,(req, res) => {
+router.get('/home', ensureAuthenticated,(req, res) => {
   let theme;
   let safeClient;
   let safeProfile;

@@ -30,14 +30,13 @@ require('./auth/passport')(passport);
 app.set('trust proxy', 1);
 app.use(
     session({
-      secret: process.env.SESSION_SECRET || 'supersecretkey',
+      secret: 'keyboard_cat',
+      resave: true,
+      saveUninitialized: true,
       proxy: true,
-      resave: false,
-      saveUninitialized: false,
       cookie: {
         secure: true,
-        sameSite: 'lax',
-        maxAge: 24 * 60 * 60 * 1000
+        sameSite: 'none'
       }
     })
 );
@@ -65,23 +64,25 @@ app.use('/', require('./routes/plugins.js'));
 const loginRoutes = require('./routes/login.js');
 app.use('/', loginRoutes);
 app.get('/auth/discord/callback',
-  passport.authenticate('discord', { failureRedirect: '/' }),
-  (req, res) => {
-    try {
-      req.session.user = req.user;
-      req.session.save(error => {
-        if (error) {
-          console.error('Session Save Error:', error.stack || error);
-          return res.redirect('/');
-        }
-        res.redirect('/dashboard');
+  (req, res, next) => {
+    passport.authenticate('discord', (err, user) => {
+      if (err || !user) return res.redirect('/');
+      req.logIn(user, loginErr => {
+        if (loginErr) return res.redirect('/');
+        req.session.save(() => {
+          return res.redirect('/dashboard');
+        });
       });
-    } catch (error) {
-      console.error('OAuth callback handler failed:', error.stack || error);
-      res.redirect('/');
-    }
+    })(req, res, next);
   }
 );
+
+app.get('/dashboard', (req, res) => {
+  if (!req.isAuthenticated || !req.isAuthenticated()) {
+    return res.redirect('/');
+  }
+  res.send('Dashboard Loaded Successfully!');
+});
 
 http.listen(port)
 
