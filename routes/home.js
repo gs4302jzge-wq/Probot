@@ -40,13 +40,16 @@ function getSafeClient() {
 }
 
 router.get('/', (req,res) =>{
-  if (typeof req.isAuthenticated === 'function' && req.isAuthenticated()) {
-    return res.redirect('/dashboard');
+  try {
+    const botUser = discord.client && discord.client.user;
+    return res.render('login/login', {
+      user: botUser ? botUser.username : 'Discord BOT Dashboard',
+      avatar: botUser && typeof botUser.avatarURL === 'function' ? botUser.avatarURL() : ''
+    });
+  } catch (error) {
+    console.error('Failed to render login page:', error.stack || error);
+    return res.status(500).send('Unable to load the login page.');
   }
-  if (req.session && req.session.user) {
-    return res.redirect('/dashboard');
-  }
-  return res.redirect('/login');
 })
 
 router.get(['/home', '/dashboard'], ensureAuthenticated,(req, res) => {
