@@ -30,7 +30,7 @@ require('./auth/passport')(passport);
 app.set('trust proxy', 1);
 app.use(
     session({
-      secret: process.env.SESSION_SECRET || 'secret_key',
+      secret: process.env.SESSION_SECRET || 'supersecretkey',
       proxy: true,
       resave: false,
       saveUninitialized: false,
@@ -67,14 +67,19 @@ app.use('/', loginRoutes);
 app.get('/auth/discord/callback',
   passport.authenticate('discord', { failureRedirect: '/' }),
   (req, res) => {
-    req.session.user = req.user;
-    req.session.save(error => {
-      if (error) {
-        console.error('Session Save Error:', error.stack || error);
-        return res.redirect('/');
-      }
-      res.redirect('/dashboard');
-    });
+    try {
+      req.session.user = req.user;
+      req.session.save(error => {
+        if (error) {
+          console.error('Session Save Error:', error.stack || error);
+          return res.redirect('/');
+        }
+        res.redirect('/dashboard');
+      });
+    } catch (error) {
+      console.error('OAuth callback handler failed:', error.stack || error);
+      res.redirect('/');
+    }
   }
 );
 

@@ -2,11 +2,16 @@ const config = require('../config/config.json');
 
 module.exports = {
     ensureAuthenticated: function(req, res, next) {
-      const isAuthenticated = typeof req.isAuthenticated === 'function' && req.isAuthenticated();
-      if ((isAuthenticated && req.user) || req.session?.user) {
-        return next();
+      try {
+        const isAuthenticated = typeof req.isAuthenticated === 'function' && req.isAuthenticated();
+        if ((isAuthenticated && req.user) || req.session?.user) {
+          return next();
+        }
+        return res.redirect('/');
+      } catch (error) {
+        console.error('Authentication middleware failed:', error.stack || error);
+        return next(error);
       }
-      res.redirect('/login');
     },
     superAdminOnly: function(req, res, next) {
       const configuredAdmins = Array.isArray(config.Admin) ? config.Admin : [];

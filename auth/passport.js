@@ -32,8 +32,22 @@ module.exports = function(passport) {
       }
     }));
 
-    passport.serializeUser((user, done) => done(null, user));
-    passport.deserializeUser((obj, done) => done(null, obj));
+    passport.serializeUser((user, done) => {
+      try {
+        done(null, user || null);
+      } catch (error) {
+        console.error('Failed to serialize Discord user:', error.stack || error);
+        done(error);
+      }
+    });
+    passport.deserializeUser((obj, done) => {
+      try {
+        done(null, obj || null);
+      } catch (error) {
+        console.error('Failed to deserialize Discord user:', error.stack || error);
+        done(error);
+      }
+    });
 }
 
 module.exports.callbackURL = callbackURL;
