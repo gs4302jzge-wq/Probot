@@ -66,20 +66,30 @@ const loginRoutes = require('./routes/login.js');
 app.use('/', loginRoutes);
 app.get('/auth/discord/callback', (req, res, next) => {
   passport.authenticate('discord', (err, user, info) => {
-    if (err) return next(err);
+    if (err) {
+      console.error('Discord OAuth callback error:', err && err.stack ? err.stack : err);
+      return res.redirect('/');
+    }
     if (!user) {
       if (info) console.error('Discord OAuth rejected:', info.message || info);
       return res.redirect('/');
     }
 
     req.logIn(user, loginError => {
-      if (loginError) return next(loginError);
+      if (loginError) {
+        console.error('Discord session login error:', loginError.stack || loginError);
+        return res.redirect('/');
+      }
       if (!req.session || typeof req.session.save !== 'function') {
-        return next(new Error('Session middleware is unavailable during Discord OAuth callback'));
+        console.error('Discord OAuth callback error: session middleware is unavailable');
+        return res.redirect('/');
       }
 
       req.session.save(sessionError => {
-        if (sessionError) return next(sessionError);
+        if (sessionError) {
+          console.error('Discord session save error:', sessionError.stack || sessionError);
+          return res.redirect('/');
+        }
         res.redirect('/dashboard');
       });
     });
