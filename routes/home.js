@@ -39,8 +39,14 @@ function getSafeClient() {
   };
 }
 
-router.get('/', ensureAuthenticated,(req,res) =>{
-  res.redirect('/dashboard')
+router.get('/', (req,res) =>{
+  if (typeof req.isAuthenticated === 'function' && req.isAuthenticated()) {
+    return res.redirect('/dashboard');
+  }
+  if (req.session && req.session.user) {
+    return res.redirect('/dashboard');
+  }
+  return res.redirect('/login');
 })
 
 router.get(['/home', '/dashboard'], ensureAuthenticated,(req, res) => {

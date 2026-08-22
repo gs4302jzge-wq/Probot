@@ -3,10 +3,8 @@ const config = require('../config/config.json');
 module.exports = {
     ensureAuthenticated: function(req, res, next) {
       try {
-        const isAuthenticated = typeof req.isAuthenticated === 'function' && req.isAuthenticated();
-        if ((isAuthenticated && req.user) || req.session?.user) {
-          return next();
-        }
+        if (typeof req.isAuthenticated === 'function' && req.isAuthenticated()) return next();
+        if (req.session && req.session.user) return next();
         return res.redirect('/');
       } catch (error) {
         console.error('Authentication middleware failed:', error.stack || error);
