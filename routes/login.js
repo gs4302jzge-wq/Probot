@@ -4,7 +4,7 @@ const discord = require('../bot')
 const { ensureAuthenticated, forwardAuthenticated } = require('../auth/auth');
 const passport = require('passport');
 
-router.get('/', forwardAuthenticated, (req, res) => {
+router.get('/login', forwardAuthenticated, (req, res) => {
     const botUser = discord.client.user;
     res.render('login/login',{
         user:botUser ? botUser.username : 'Discord BOT Dashboard',
@@ -12,7 +12,9 @@ router.get('/', forwardAuthenticated, (req, res) => {
     })
 })
 
-router.get('/api', forwardAuthenticated,(req,res, next)=>{
+router.get('/login/api', forwardAuthenticated, passport.authenticate('discord'));
+
+router.get('/auth/discord/callback', (req, res, next) => {
     passport.authenticate('discord', (error, user, info) => {
         if (error) {
             console.error('Discord OAuth authentication failed:', error);
@@ -34,9 +36,9 @@ router.get('/api', forwardAuthenticated,(req,res, next)=>{
                 return res.redirect('/login');
             }
 
-            return res.redirect('/home');
+            return res.redirect('/');
         });
     })(req, res, next);
-})
+});
 
 module.exports = router;

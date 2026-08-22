@@ -1,7 +1,7 @@
 {
     "clientID":"1540577416353677415",
     "clientSecret":"",
-    "callbackURL":"https://discord-bot-dashboard-v2-1-bihd.onrender.com/login/api",
+    "callbackURL":"http://localhost:1337/auth/discord/callback",
     "Admin":["872536570706673784"],
     "token":"",
     "prefix":"-",

@@ -55,7 +55,7 @@ app.use('/', require('./routes/guilds.js'));
 app.use('/', require('./routes/support.js'));
 app.use('/', require('./routes/plugins.js'));
 
-app.use('/login', require('./routes/login.js'));
+app.use('/', require('./routes/login.js'));
 
 http.listen(port)
 

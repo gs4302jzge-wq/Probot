@@ -14,7 +14,7 @@ Rename ``config.default.json`` to ``config.json`` and open up the file, this can
 {
     "clientID":"BOTclientID",
     "clientSecret":"BOTclientSecret",
-    "callbackURL":"http://localhost:1337/login/api",
+    "callbackURL":"http://localhost:1337/auth/discord/callback",
     "Admin":["userAdminID"],
     "token":"BOTtoken",
     "prefix":"-",
@@ -24,7 +24,7 @@ Rename ``config.default.json`` to ``config.json`` and open up the file, this can
 
 * **``clientID``** - This is the Client ID for your BOT, this can be found in the [Discord Developer Portal](https://discord.com/developers) or in the Discord Client.
 * **``clientSecret``** - This is the Client Secret for your BOT, this can be ONLY be found in the [Discord Developer Portal](https://discord.com/developers)
-* **``callbackURL``** - Head over to OAuth2 and create a redirect link. Please use: ``http://localhost:1337/login/api`` Can change ``localhost`` for the IP of your system.
+* **``callbackURL``** - Add the exact URL used by ``DISCORD_CALLBACK_URL`` in the Discord Developer Portal. Locally use ``http://localhost:1337/auth/discord/callback``; on Render use ``https://your-service.onrender.com/auth/discord/callback``.
 
 <img src="/assets/images/example_dbp.jpeg">
 
