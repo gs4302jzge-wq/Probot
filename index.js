@@ -30,13 +30,13 @@ require('./auth/passport')(passport);
 app.set('trust proxy', 1);
 app.use(
     session({
-      secret: process.env.SESSION_SECRET || 'your_secret_key',
+      secret: process.env.SESSION_SECRET || 'secret_key',
       proxy: true,
       resave: false,
       saveUninitialized: false,
       cookie: {
         secure: true,
-        sameSite: 'none',
+        sameSite: 'lax',
         maxAge: 24 * 60 * 60 * 1000
       }
     })
