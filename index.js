@@ -11,8 +11,6 @@ const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 
-app.set('trust proxy', 1);
-
 const port = process.env.PORT || 1337;
 const publicPath = path.join(__dirname, 'public');
 const themesPath = path.join(__dirname, 'themes');
@@ -29,15 +27,17 @@ require('./auth/passport')(passport);
 
 
 // Express session
+app.set('trust proxy', 1);
 app.use(
     session({
-      secret: process.env.SESSION_SECRET || require('crypto').randomBytes(32).toString('hex'),
+      secret: process.env.SESSION_SECRET || 'your_secret_key',
       proxy: true,
-      resave: true,
+      resave: false,
       saveUninitialized: false,
       cookie: {
-        sameSite: 'lax',
-        secure: process.env.NODE_ENV === 'production' || Boolean(process.env.RENDER_EXTERNAL_URL)
+        secure: true,
+        sameSite: 'none',
+        maxAge: 24 * 60 * 60 * 1000
       }
     })
 );
@@ -64,7 +64,18 @@ app.use('/', require('./routes/plugins.js'));
 
 const loginRoutes = require('./routes/login.js');
 app.use('/', loginRoutes);
-app.get('/auth/discord/callback', loginRoutes.discordCallback);
+app.get('/auth/discord/callback',
+  passport.authenticate('discord', { failureRedirect: '/' }),
+  (req, res) => {
+    req.session.save(sessionError => {
+      if (sessionError) {
+        console.error('Discord session save failed:', sessionError);
+        return res.redirect('/');
+      }
+      res.redirect('/dashboard');
+    });
+  }
+);
 
 http.listen(port)
 
