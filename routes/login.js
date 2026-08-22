@@ -4,6 +4,10 @@ const discord = require('../bot')
 const { ensureAuthenticated, forwardAuthenticated } = require('../auth/auth');
 const passport = require('passport');
 
+function getRedirectUri(req) {
+    return `${req.protocol}://${req.get('host')}/auth/discord/callback`;
+}
+
 router.get('/login', forwardAuthenticated, (req, res) => {
     const botUser = discord.client.user;
     res.render('login/login',{
@@ -12,10 +16,15 @@ router.get('/login', forwardAuthenticated, (req, res) => {
     })
 })
 
-router.get('/login/api', forwardAuthenticated, passport.authenticate('discord'));
+router.get('/login/api', forwardAuthenticated, (req, res, next) => {
+    const redirectUri = getRedirectUri(req);
+    console.log('Generated Redirect URI:', redirectUri);
+    passport.authenticate('discord', { callbackURL: redirectUri })(req, res, next);
+});
 
 router.get('/auth/discord/callback', (req, res, next) => {
-    passport.authenticate('discord', (error, user, info) => {
+    const redirectUri = getRedirectUri(req);
+    passport.authenticate('discord', { callbackURL: redirectUri }, (error, user, info) => {
         if (error) {
             console.error('Discord OAuth authentication failed:', error);
             req.flash('error', 'Discord authentication failed. Please try again.');
