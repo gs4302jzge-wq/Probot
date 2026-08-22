@@ -10,9 +10,9 @@ require.cache[fetchPath] = {
   exports: async () => ({ json: async () => ({ message: 'https://example.com/dog.png' }) })
 };
 
-const commands = require('../src/commands');
-const messageEvent = require('../src/events/message');
-const aliasesFile = path.join(__dirname, '../src/config/aliases.json');
+const commands = require('../commands');
+const messageEvent = require('../events/message');
+const aliasesFile = path.join(__dirname, '../config/aliases.json');
 const originalAliases = fs.readFileSync(aliasesFile, 'utf8');
 process.on('exit', () => fs.writeFileSync(aliasesFile, originalAliases));
 

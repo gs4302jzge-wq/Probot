@@ -5,6 +5,8 @@ module.exports = (client, message) => {
   if (typeof message.content !== 'string') return;
   
     const resolved = resolveMessageCommand(client, message);
+    if (!resolved) return;
+
     const { command, commandName, args, guildId } = resolved;
     if (resolved.aliasTriggered) {
       console.log(`[Alias Triggered] Guild: ${guildId || 'DM'} | Text: ${message.content.trim()} -> Resolved Command: ${commandName}`);

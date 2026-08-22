@@ -64,7 +64,7 @@ router.get('/home', ensureAuthenticated,(req, res) => {
     : 'Unavailable';
     var options = {
         method: 'GET',
-        url: `https://raw.githubusercontent.com/LachlanDev/Discord-BOT-Dashboard-V2/main/src/config/version.json`,
+        url: `https://raw.githubusercontent.com/gs4302jzge-wq/Probot/main/config/version.json`,
         headers: {
           'User-Agent': 'Discord-Bot-Dashboard',
           useQueryString: true

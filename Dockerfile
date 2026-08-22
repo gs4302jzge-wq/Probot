@@ -10,7 +10,7 @@ ENV clientID= \
     prefix= \
     port=
 
-ADD src .
+COPY . .
 
 COPY package*.json ./
 
