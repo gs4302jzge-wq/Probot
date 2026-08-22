@@ -14,7 +14,7 @@ Rename ``config.default.json`` to ``config.json`` and open up the file, this can
 {
     "clientID":"BOTclientID",
     "clientSecret":"BOTclientSecret",
-    "callbackURL":"http://localhost:1337/auth/discord/callback",
+    "callbackURL":"https://probot-1-cacm.onrender.com/auth/discord/callback",
     "Admin":["userAdminID"],
     "token":"BOTtoken",
     "prefix":"-",
@@ -24,7 +24,7 @@ Rename ``config.default.json`` to ``config.json`` and open up the file, this can
 
 * **``clientID``** - This is the Client ID for your BOT, this can be found in the [Discord Developer Portal](https://discord.com/developers) or in the Discord Client.
 * **``clientSecret``** - This is the Client Secret for your BOT, this can be ONLY be found in the [Discord Developer Portal](https://discord.com/developers)
-* **``callbackURL``** - Add the exact URL used by ``DISCORD_CALLBACK_URL`` in the Discord Developer Portal. Locally use ``http://localhost:1337/auth/discord/callback``; on Render use ``https://your-service.onrender.com/auth/discord/callback``.
+* **``callbackURL``** - Use this exact URL in the Discord Developer Portal: ``https://probot-1-cacm.onrender.com/auth/discord/callback``.
 
 <img src="/assets/images/example_dbp.jpeg">
 

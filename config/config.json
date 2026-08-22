@@ -1,7 +1,7 @@
 {
     "clientID":"1540577416353677415",
     "clientSecret":"",
-    "callbackURL":"http://localhost:1337/auth/discord/callback",
+    "callbackURL":"https://probot-1-cacm.onrender.com/auth/discord/callback",
     "Admin":["872536570706673784"],
     "token":"",
     "prefix":"-",

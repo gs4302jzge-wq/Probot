@@ -31,7 +31,7 @@ Rename ``config.default.json`` to ``config.json`` and open up the file, this can
 {
     "clientID":"BOTclientID",
     "clientSecret":"BOTclientSecret",
-    "callbackURL":"http://localhost:1337/auth/discord/callback",
+    "callbackURL":"https://probot-1-cacm.onrender.com/auth/discord/callback",
     "Admin":["userAdminID"],
     "token":"BOTtoken",
     "prefix":"-",
@@ -42,7 +42,7 @@ Rename ``config.default.json`` to ``config.json`` and open up the file, this can
 
 Redirects
 You must specify at least one URI for authentication to work. If you pass a URI in an OAuth request, it must exactly match one of the URIs you enter here.
-http://localhost:1337/auth/discord/callback
+https://probot-1-cacm.onrender.com/auth/discord/callback
 
 Make sure to enable both "Privileged Gateway Intents" on the [**Discord Developer Dashboard**](https://discord.com/developers). This is to fix errors  with "Kick / Ban" Commands!
 

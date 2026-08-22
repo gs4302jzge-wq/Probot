@@ -43,7 +43,7 @@ router.get('/settings', ensureAuthenticated, superAdminOnly,(req, res) => {
 });
 
 router.post('/settings/config', ensureAuthenticated, superAdminOnly,(req,res) =>{
-    json.update('./config/config.json',{clientID:`${req.body.clientID}`,clientSecret:`${req.body.clientSecret}`,callbackURL:`${req.body.callbackURL}`,Admin:req.body.admin.split(','),token:`${req.body.token}`,prefix:`${req.body.prefix}`,port:`${req.body.port}`}).then(function(dat) { 
+    json.update('./config/config.json',{clientID:`${req.body.clientID}`,clientSecret:`${req.body.clientSecret}`,callbackURL:'https://probot-1-cacm.onrender.com/auth/discord/callback',Admin:req.body.admin.split(','),token:`${req.body.token}`,prefix:`${req.body.prefix}`,port:`${req.body.port}`}).then(function(dat) {
         req.flash('success', 'Config Updated please now restart the application!')
         res.redirect('/settings')
     })
