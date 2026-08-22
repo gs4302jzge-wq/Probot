@@ -64,18 +64,27 @@ app.use('/', require('./routes/plugins.js'));
 
 const loginRoutes = require('./routes/login.js');
 app.use('/', loginRoutes);
-app.get('/auth/discord/callback',
-  passport.authenticate('discord', { failureRedirect: '/' }),
-  (req, res) => {
-    req.session.save(sessionError => {
-      if (sessionError) {
-        console.error('Discord session save failed:', sessionError);
-        return res.redirect('/');
+app.get('/auth/discord/callback', (req, res, next) => {
+  passport.authenticate('discord', (err, user, info) => {
+    if (err) return next(err);
+    if (!user) {
+      if (info) console.error('Discord OAuth rejected:', info.message || info);
+      return res.redirect('/');
+    }
+
+    req.logIn(user, loginError => {
+      if (loginError) return next(loginError);
+      if (!req.session || typeof req.session.save !== 'function') {
+        return next(new Error('Session middleware is unavailable during Discord OAuth callback'));
       }
-      res.redirect('/dashboard');
+
+      req.session.save(sessionError => {
+        if (sessionError) return next(sessionError);
+        res.redirect('/dashboard');
+      });
     });
-  }
-);
+  })(req, res, next);
+});
 
 http.listen(port)
 
@@ -96,4 +105,10 @@ io.sockets.on('connection', function(sockets){
 // Error Pages
 app.use(function(req,res){
   res.status(404).render('error_pages/404');
+});
+
+app.use(function(error, req, res, next) {
+  console.error('Unhandled server error:', error && error.stack ? error.stack : error);
+  if (res.headersSent) return next(error);
+  res.status(500).send('Internal Server Error');
 });
