@@ -32,8 +32,13 @@ require('./auth/passport')(passport);
 app.use(
     session({
       secret: process.env.SESSION_SECRET || require('crypto').randomBytes(32).toString('hex'),
+      proxy: true,
       resave: true,
-      saveUninitialized: true
+      saveUninitialized: false,
+      cookie: {
+        sameSite: 'lax',
+        secure: process.env.NODE_ENV === 'production' || Boolean(process.env.RENDER_EXTERNAL_URL)
+      }
     })
 );
   

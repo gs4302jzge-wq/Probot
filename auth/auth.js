@@ -2,7 +2,7 @@ const config = require('../config/config.json');
 
 module.exports = {
     ensureAuthenticated: function(req, res, next) {
-      if (req.isAuthenticated()) {
+      if (typeof req.isAuthenticated === 'function' && req.isAuthenticated() && req.user) {
         return next();
       }
       res.redirect('/login');
