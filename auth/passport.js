@@ -4,9 +4,7 @@ const config = require('../config/config.json')
 const clientID = process.env.DISCORD_CLIENT_ID || process.env.CLIENT_ID || config.clientID;
 const clientSecret = process.env.DISCORD_CLIENT_SECRET || config.clientSecret;
 const callbackURL = process.env.DISCORD_CALLBACK_URL
-  || process.env.OAUTH_CALLBACK_URL
-  || (process.env.RENDER_EXTERNAL_URL && `${process.env.RENDER_EXTERNAL_URL}/auth/discord/callback`)
-  || config.callbackURL;
+  || 'https://probot-1-cacm.onrender.com/auth/discord/callback';
 const defaultAvatarUrl = 'https://cdn.discordapp.com/embed/avatars/0.png';
 
 module.exports = function(passport) {
@@ -43,3 +41,5 @@ module.exports = function(passport) {
         done(null, user);
       });
 }
+
+module.exports.callbackURL = callbackURL;

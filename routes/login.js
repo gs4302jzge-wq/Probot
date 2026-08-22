@@ -3,10 +3,7 @@ const router = express.Router();
 const discord = require('../bot')
 const { ensureAuthenticated, forwardAuthenticated } = require('../auth/auth');
 const passport = require('passport');
-
-function getRedirectUri(req) {
-    return `${req.protocol}://${req.get('host')}/auth/discord/callback`;
-}
+const { callbackURL } = require('../auth/passport');
 
 router.get('/login', forwardAuthenticated, (req, res) => {
     const botUser = discord.client.user;
@@ -17,14 +14,12 @@ router.get('/login', forwardAuthenticated, (req, res) => {
 })
 
 router.get('/login/api', forwardAuthenticated, (req, res, next) => {
-    const redirectUri = getRedirectUri(req);
-    console.log('Generated Redirect URI:', redirectUri);
-    passport.authenticate('discord', { callbackURL: redirectUri })(req, res, next);
+    console.log('Generated Redirect URI:', callbackURL);
+    passport.authenticate('discord')(req, res, next);
 });
 
-router.get('/auth/discord/callback', (req, res, next) => {
-    const redirectUri = getRedirectUri(req);
-    passport.authenticate('discord', { callbackURL: redirectUri }, (error, user, info) => {
+function discordCallback(req, res, next) {
+    passport.authenticate('discord', (error, user, info) => {
         if (error) {
             console.error('Discord OAuth authentication failed:', error);
             req.flash('error', 'Discord authentication failed. Please try again.');
@@ -48,6 +43,7 @@ router.get('/auth/discord/callback', (req, res, next) => {
             return res.redirect('/');
         });
     })(req, res, next);
-});
+}
 
 module.exports = router;
+module.exports.discordCallback = discordCallback;

@@ -57,7 +57,9 @@ app.use('/', require('./routes/guilds.js'));
 app.use('/', require('./routes/support.js'));
 app.use('/', require('./routes/plugins.js'));
 
-app.use('/', require('./routes/login.js'));
+const loginRoutes = require('./routes/login.js');
+app.use('/', loginRoutes);
+app.get('/auth/discord/callback', loginRoutes.discordCallback);
 
 http.listen(port)
 
